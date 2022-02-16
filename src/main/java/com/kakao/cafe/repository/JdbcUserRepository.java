@@ -27,10 +27,10 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User save(User user) {
         logger.debug("[Jdbc] user save {}", user);
-        String sql = "insert into users(user_id, password, name, email) values(?, ?, ?, ?)";
+        String sql = "insert into users(user_id, name, email) values(?, ?, ?)";
         try {
             jdbcTemplate.update(sql,
-                    user.getUserId(), user.getPassword(), user.getUserName(), user.getEmail());
+                    user.getUserId(), user.getUserName(), user.getEmail());
             logger.debug("[Jdbc] user save success: {}", user);
         } catch (DuplicateKeyException e) {
             throw new DuplicateUserException("사용자가 이미 존재합니다");
@@ -45,7 +45,6 @@ public class JdbcUserRepository implements UserRepository {
 
         List<User> userList = jdbcTemplate.query(sql, (rs, rowNum) -> new User(rs.getInt("id"),
                 rs.getString("user_id"),
-                rs.getString("password"),
                 rs.getString("name"),
                 rs.getString("email")));
         logger.debug("[Jdbc] user findAll success: {}", userList);
@@ -60,14 +59,13 @@ public class JdbcUserRepository implements UserRepository {
         try {
             User user = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new User(rs.getInt("id"),
                             rs.getString("user_id"),
-                            rs.getString("password"),
                             rs.getString("name"),
                             rs.getString("email")),
                     userId);
             logger.debug("[Jdbc] user findByUserId success: {}", user);
             return user;
         } catch (EmptyResultDataAccessException e) {
-            throw new UserNotFoundException("사용자 ID가 없습니다");
+            return null;
         }
     }
 
@@ -79,7 +77,6 @@ public class JdbcUserRepository implements UserRepository {
         try {
             User user = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new User(rs.getInt("id"),
                             rs.getString("user_id"),
-                            rs.getString("password"),
                             rs.getString("name"),
                             rs.getString("email")),
                     id);

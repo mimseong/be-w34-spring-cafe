@@ -6,14 +6,12 @@ public class User {
 
     private final int id;
     private final String userId;
-    private final String password;
     private final String name;
     private final String email;
 
-    public User(int id, String userId, String password, String name, String email) {
+    public User(int id, String userId, String name, String email) {
         this.id = id;
         this.userId = userId;
-        this.password = password;
         this.name = name;
         this.email = email;
     }
@@ -28,10 +26,6 @@ public class User {
 
     public String getUserName() {
         return name;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getEmail() {
@@ -59,7 +53,6 @@ public class User {
     public String toString() {
         return "User id: " + id +
                 ", userId: " + userId +
-                ", password: " + password +
                 ", name: " + name +
                 ", email: " + email;
     }

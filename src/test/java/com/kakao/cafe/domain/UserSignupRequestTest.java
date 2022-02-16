@@ -9,21 +9,20 @@ class UserSignupRequestTest {
 
     private final int INITIAL_ID = 0;
     private final String userId = "userId";
-    private final String password = "password";
     private final String name = "name";
     private final String email = "email";
 
     @Test
     @DisplayName("[성공] UserSignupRequest 객체를 생성한다")
     void UserSignupRequest() {
-        new UserSignupRequest(userId, password, name, email);
+        new UserSignupRequest(userId, name, email);
     }
 
     @Test
     @DisplayName("[성공] Entitty로 올바르게 변환한다")
     void toEntity() {
-        UserSignupRequest userSignupRequest = new UserSignupRequest(userId, password, name, email);
-        User user_Answer = new User(INITIAL_ID, userId, password, name, email);
+        UserSignupRequest userSignupRequest = new UserSignupRequest(userId, name, email);
+        User user_Answer = new User(INITIAL_ID, userId, name, email);
 
         User user = userSignupRequest.toEntity();
 

@@ -8,25 +8,12 @@
     </div>
     <ul class="nav navbar-nav navbar-right">
       <li class="active"><a href="/users">멤버 리스트</a></li>
+      {{^sessionUser}}
       <li><a class="black-component" href="/user/login" role="button">로그인</a></li>
-      <li>
-        <button class="black-component" onclick="unlinkApp()">탈퇴하기</button>
-      </li>
-      <script type="text/javascript">
-        function unlinkApp() {
-          Kakao.API.request({
-            url: '/v1/user/unlink',
-            success: function (response) {
-              console.log(response);
-              alert('탈퇴성공 (안녕히가세요)');
-            },
-            fail: function (error) {
-              console.log(error);
-              alert('탈퇴실패 (가지마세요)');
-            },
-          })
-        }
-      </script>
+      {{/sessionUser}}
+      {{#sessionUser}}
+      <li><a class="black-component" href="/users/logout" role="button">로그아웃</a></li>
+      {{/sessionUser}}
     </ul>
   </div>
 </nav>

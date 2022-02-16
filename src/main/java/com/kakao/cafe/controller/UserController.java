@@ -1,21 +1,16 @@
 package com.kakao.cafe.controller;
 
 import com.kakao.cafe.domain.User;
-import com.kakao.cafe.exceptions.InvalidUserRequestException;
 import com.kakao.cafe.request.UserSignupRequest;
 import com.kakao.cafe.response.ProfileResponse;
 import com.kakao.cafe.response.UserListResponse;
 import com.kakao.cafe.service.UserService;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,22 +27,6 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @PostMapping()
-    public String signUp(@Valid UserSignupRequest userDto, BindingResult errors) {
-        logger.info("[POST]  회원가입하기");
-        if (errors.hasErrors()) {
-            String errorMessage = errors.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining("\n"));
-            throw new InvalidUserRequestException(errorMessage);
-        }
-
-        User user = userDto.toEntity();
-        userService.register(user);
-
-        return "redirect:/users";
     }
 
     @GetMapping()
@@ -71,9 +50,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserSignupRequest userDto) {
+    public String login(@RequestBody UserSignupRequest userDto, HttpSession session) {
         logger.info("[POST] /login 로그인");
         logger.info("user DTO: " + userDto);
+
+        User user = userDto.toEntity();
+
+        if (userService.findByUserId(user.getUserId()) == null) {
+            userService.register(user);
+        }
+        session.setAttribute(SESSION, user);
         return "redirect:/";
     }
 
