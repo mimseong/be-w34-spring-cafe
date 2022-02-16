@@ -27,4 +27,14 @@ public class UserSignupRequest {
     public User toEntity() {
         return new User(INITIAL_ID, userId, password, name, email);
     }
+
+    @Override
+    public String toString() {
+        return "UserSignupRequest{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
