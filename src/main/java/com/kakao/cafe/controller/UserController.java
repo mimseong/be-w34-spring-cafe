@@ -1,9 +1,7 @@
 package com.kakao.cafe.controller;
 
 import com.kakao.cafe.domain.User;
-import com.kakao.cafe.exceptions.InvalidLoginRequestException;
 import com.kakao.cafe.exceptions.InvalidUserRequestException;
-import com.kakao.cafe.request.LoginRequest;
 import com.kakao.cafe.request.UserSignupRequest;
 import com.kakao.cafe.response.ProfileResponse;
 import com.kakao.cafe.response.UserListResponse;
@@ -21,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -72,17 +71,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid LoginRequest request, HttpSession session, BindingResult errors) {
+    public void login(@RequestBody UserSignupRequest userDto) {
         logger.info("[POST] /login 로그인");
-        if (errors.hasErrors()) {
-            String errorMessage = errors.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining("\n"));
-
-            throw new InvalidLoginRequestException(errorMessage);
-        }
-        session.setAttribute(SESSION, userService.login(request));
-        return "redirect:/";
     }
 
     @GetMapping("/logout")
