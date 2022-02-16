@@ -34,10 +34,10 @@
             success: function (response) {
               console.log('사용자 정보 가져오기 성공');
               axios.post('/users/login', {
-                userId: "userId",
+                userId: response.id,
                 password: "password",
-                name: "name",
-                email: "email"
+                name: response.properties.nickname,
+                email: response.kakao_account.email
               }).then(response => {
                 window.location.href = "/";
               });

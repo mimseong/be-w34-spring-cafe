@@ -71,8 +71,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody UserSignupRequest userDto) {
+    public String login(@RequestBody UserSignupRequest userDto) {
         logger.info("[POST] /login 로그인");
+        logger.info("user DTO: " + userDto);
+        return "redirect:/";
     }
 
     @GetMapping("/logout")
