@@ -33,6 +33,7 @@ class UserControllerTest {
     private static final String password = "testPassword";
     private static final String name = "testName";
     private static final String email = "testEmail@kakaocorp.com";
+    private static final String accessToken = "accessToken";
 
     @Autowired
     private MockMvc mockMvc;
@@ -170,7 +171,7 @@ class UserControllerTest {
                 .andExpect(redirectedUrl("/users"));
 
         MockHttpSession session = new MockHttpSession();
-        SessionUser sessionUser = new SessionUser(firstId, userId);
+        SessionUser sessionUser = new SessionUser(firstId, userId, accessToken);
 
         mockMvc.perform(post("/users/login")
                         .session(session)
@@ -197,7 +198,7 @@ class UserControllerTest {
                 .andExpect(redirectedUrl("/users"));
 
         MockHttpSession session = new MockHttpSession();
-        SessionUser sessionUser = new SessionUser(firstId, userId);
+        SessionUser sessionUser = new SessionUser(firstId, userId, accessToken);
         session.setAttribute(SESSION, sessionUser);
 
         mockMvc.perform(get("/users/logout")

@@ -55,12 +55,13 @@ public class UserController {
         logger.info("[POST] /login 로그인");
         logger.info("user DTO: " + userDto);
 
+        String accessToken = userDto.getAccessToken();
         User user = userDto.toEntity();
 
         if (userService.findByUserId(user.getUserId()) == null) {
             userService.register(user);
         }
-        session.setAttribute(SESSION, SessionUser.from(user));
+        session.setAttribute(SESSION, SessionUser.from(user, accessToken));
         return "redirect:/";
     }
 
