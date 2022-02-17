@@ -6,9 +6,11 @@
   <title>☕️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link href="../css/reset.css" rel="stylesheet">
-  <!--[if lt IE 9]>
-  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script type="text/javascript">
+    Kakao.init('08ab5c6c77309db4b285b5e238d2ea6f');
+    console.log(Kakao.isInitialized());
+  </script>
   <link href="../css/user/list.css" rel="stylesheet">
 </head>
 <body>
