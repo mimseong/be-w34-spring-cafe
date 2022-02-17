@@ -11,18 +11,20 @@ class UserSignupRequestTest {
     private final String userId = "userId";
     private final String name = "name";
     private final String email = "email";
+    private final String accessToken = "accessToken";
+    private final String scope = "scope";
 
     @Test
     @DisplayName("[성공] UserSignupRequest 객체를 생성한다")
     void UserSignupRequest() {
-        new UserSignupRequest(userId, name, email);
+        new UserSignupRequest(userId, name, email, accessToken, scope);
     }
 
     @Test
     @DisplayName("[성공] Entitty로 올바르게 변환한다")
     void toEntity() {
-        UserSignupRequest userSignupRequest = new UserSignupRequest(userId, name, email);
-        User user_Answer = new User(INITIAL_ID, userId, name, email);
+        UserSignupRequest userSignupRequest = new UserSignupRequest(userId, name, email, accessToken, scope);
+        User user_Answer = new User(INITIAL_ID, userId, name, email, scope);
 
         User user = userSignupRequest.toEntity();
 

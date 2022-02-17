@@ -19,6 +19,8 @@
         function login() {
           Kakao.Auth.login({
             success: function (response) {
+              const accessToken = response.access_token;
+              const scope = response.scope;
               console.log('로그인 성공');
               Kakao.API.request({
                 url: '/v2/user/me',
@@ -28,7 +30,9 @@
                     userId: response.id,
                     password: "password",
                     name: response.properties.nickname,
-                    email: response.kakao_account.email
+                    email: response.kakao_account.email,
+                    accessToken: accessToken,
+                    scope: scope
                   }).then(response => {
                     location.reload();
                   });

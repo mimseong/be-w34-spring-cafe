@@ -14,15 +14,25 @@ public class UserSignupRequest {
     @NotBlank(message = "이메일이 비어있습니다")
     @Email
     private final String email;
+    @NotBlank(message = "accessToken이 비어있습니다")
+    private final String accessToken;
+    @NotBlank(message = "scope가 비어있습니다")
+    private final String scope;
 
-    public UserSignupRequest(String userId, String name, String email) {
+    public UserSignupRequest(String userId, String name, String email, String accessToken, String scope) {
         this.userId = userId;
         this.name = name;
         this.email = email;
+        this.accessToken = accessToken;
+        this.scope = scope;
     }
 
     public User toEntity() {
-        return new User(INITIAL_ID, userId, name, email);
+        return new User(INITIAL_ID, userId, name, email, scope);
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
     @Override
@@ -31,6 +41,8 @@ public class UserSignupRequest {
                 "userId='" + userId + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", accessToken='" + accessToken + '\'' +
+                ", scope='" + scope + '\'' +
                 '}';
     }
 }

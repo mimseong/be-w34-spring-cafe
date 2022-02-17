@@ -27,10 +27,10 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User save(User user) {
         logger.debug("[Jdbc] user save {}", user);
-        String sql = "insert into users(user_id, name, email) values(?, ?, ?)";
+        String sql = "insert into users(user_id, name, email, scope) values(?, ?, ?, ?)";
         try {
             jdbcTemplate.update(sql,
-                    user.getUserId(), user.getUserName(), user.getEmail());
+                    user.getUserId(), user.getUserName(), user.getEmail(), user.getScope());
             logger.debug("[Jdbc] user save success: {}", user);
         } catch (DuplicateKeyException e) {
             throw new DuplicateUserException("사용자가 이미 존재합니다");
@@ -46,7 +46,8 @@ public class JdbcUserRepository implements UserRepository {
         List<User> userList = jdbcTemplate.query(sql, (rs, rowNum) -> new User(rs.getInt("id"),
                 rs.getString("user_id"),
                 rs.getString("name"),
-                rs.getString("email")));
+                rs.getString("email"),
+                rs.getString("scope")));
         logger.debug("[Jdbc] user findAll success: {}", userList);
         return userList;
     }
@@ -60,7 +61,8 @@ public class JdbcUserRepository implements UserRepository {
             User user = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new User(rs.getInt("id"),
                             rs.getString("user_id"),
                             rs.getString("name"),
-                            rs.getString("email")),
+                            rs.getString("email"),
+                            rs.getString("scope")),
                     userId);
             logger.debug("[Jdbc] user findByUserId success: {}", user);
             return user;
@@ -78,7 +80,8 @@ public class JdbcUserRepository implements UserRepository {
             User user = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new User(rs.getInt("id"),
                             rs.getString("user_id"),
                             rs.getString("name"),
-                            rs.getString("email")),
+                            rs.getString("email"),
+                            rs.getString("scope")),
                     id);
             logger.debug("[Jdbc] user findByid success: {}", user);
             return user;

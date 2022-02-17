@@ -8,12 +8,14 @@ public class User {
     private final String userId;
     private final String name;
     private final String email;
+    private final String scope;
 
-    public User(int id, String userId, String name, String email) {
+    public User(int id, String userId, String name, String email, String scope) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.email = email;
+        this.scope = scope;
     }
 
     public int getId() {
@@ -30,6 +32,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getScope() {
+        return scope;
     }
 
     @Override

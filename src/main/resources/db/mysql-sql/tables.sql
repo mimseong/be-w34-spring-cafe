@@ -8,6 +8,7 @@ CREATE TABLE users
     user_id VARCHAR(100) NOT NULL UNIQUE,
     name    VARCHAR(100),
     email   VARCHAR(100),
+    scope   VARCHAR(100),
     PRIMARY KEY (id)
 );
 
