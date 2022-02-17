@@ -1,5 +1,6 @@
 package com.kakao.cafe.controller;
 
+import com.kakao.cafe.domain.SessionUser;
 import com.kakao.cafe.domain.User;
 import com.kakao.cafe.request.UserSignupRequest;
 import com.kakao.cafe.response.ProfileResponse;
@@ -59,7 +60,7 @@ public class UserController {
         if (userService.findByUserId(user.getUserId()) == null) {
             userService.register(user);
         }
-        session.setAttribute(SESSION, user);
+        session.setAttribute(SESSION, SessionUser.from(user));
         return "redirect:/";
     }
 

@@ -9,11 +9,47 @@
     <ul class="nav navbar-nav navbar-right">
       <li class="active"><a href="/users">멤버 리스트</a></li>
       {{^sessionUser}}
-      <li><a class="black-component" href="/user/login" role="button">로그인</a></li>
+      <button class="black-component" onclick="login()">로그인</button>
       {{/sessionUser}}
       {{#sessionUser}}
       <li><a class="black-component" href="/users/logout" role="button">로그아웃</a></li>
       {{/sessionUser}}
+      <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+      <script type="text/javascript">
+        Kakao.init('08ab5c6c77309db4b285b5e238d2ea6f');
+        console.log(Kakao.isInitialized());
+
+        function login() {
+          Kakao.Auth.login({
+            success: function (response) {
+              console.log('로그인 성공');
+              Kakao.API.request({
+                url: '/v2/user/me',
+                success: function (response) {
+                  console.log('사용자 정보 가져오기 성공');
+                  axios.post('/users/login', {
+                    userId: response.id,
+                    password: "password",
+                    name: response.properties.nickname,
+                    email: response.kakao_account.email
+                  }).then(response => {
+                    window.location.href = "/";
+                  });
+                },
+                fail: function (error) {
+                  console.log('사용자 정보 가져오기 실패');
+                  console.log(error);
+                }
+              });
+            },
+            fail: function (error) {
+              console.log('로그인 실패');
+              console.log(error);
+            },
+          });
+        }
+      </script>
     </ul>
   </div>
 </nav>

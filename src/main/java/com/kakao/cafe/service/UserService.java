@@ -1,6 +1,5 @@
 package com.kakao.cafe.service;
 
-import com.kakao.cafe.domain.SessionUser;
 import com.kakao.cafe.domain.User;
 import com.kakao.cafe.repository.UserRepository;
 import com.kakao.cafe.response.ProfileResponse;
@@ -18,9 +17,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public SessionUser register(User user) {
+    public void register(User user) {
         userRepository.save(user);
-        return SessionUser.from(user);
     }
 
     public List<UserListResponse> getUserList() {
