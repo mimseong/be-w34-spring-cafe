@@ -6,9 +6,11 @@
   <title>☕️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link href="css/reset.css" rel="stylesheet">
-  <!--[if lt IE 9]>
-  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script type="text/javascript">
+    Kakao.init('08ab5c6c77309db4b285b5e238d2ea6f');
+    console.log(Kakao.isInitialized());
+  </script>
   <link href="css/index.css" rel="stylesheet">
 </head>
 <body>
@@ -48,6 +50,22 @@
       </div>
     </div>
   </div>
+  <button id="kakao-link-btn">
+    <img
+        src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
+        alt="카카오링크 보내기 버튼"
+    />
+  </button>
+  <script type="text/javascript">
+    Kakao.Link.createCustomButton({
+      container: '#kakao-link-btn',
+      templateId: 71134,
+      templateArgs: {
+        'title': '제목 영역입니다.',
+        'description': '설명 영역입니다.'
+      }
+    });
+  </script>
   <div class="post-btn-container">
     <a class="post-write-btn" href="/post/write" class="btn btn-primary pull-right" role="button">글쓰기</a>
   </div>

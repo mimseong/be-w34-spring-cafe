@@ -14,12 +14,8 @@
       {{#sessionUser}}
       <li><a class="black-component" href="/users/logout" role="button">로그아웃</a></li>
       {{/sessionUser}}
-      <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
       <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
       <script type="text/javascript">
-        Kakao.init('08ab5c6c77309db4b285b5e238d2ea6f');
-        console.log(Kakao.isInitialized());
-
         function login() {
           Kakao.Auth.login({
             success: function (response) {
