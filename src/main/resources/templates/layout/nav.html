@@ -30,7 +30,7 @@
                     name: response.properties.nickname,
                     email: response.kakao_account.email
                   }).then(response => {
-                    window.location.href = "/";
+                    location.reload();
                   });
                 },
                 fail: function (error) {
