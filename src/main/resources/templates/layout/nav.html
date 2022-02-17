@@ -9,10 +9,17 @@
     <ul class="nav navbar-nav navbar-right">
       <li class="active"><a href="/users">멤버 리스트</a></li>
       {{^sessionUser}}
-      <button class="black-component" onclick="login()">로그인</button>
+      <li>
+        <button class="black-component" onclick="login()">로그인</button>
+      </li>
       {{/sessionUser}}
       {{#sessionUser}}
-      <li><a class="black-component" href="/users/logout" role="button">로그아웃</a></li>
+      <li>
+        <button class="black-component" onclick="logout()">로그아웃</button>
+      </li>
+      <li>
+        <button class="black-component" onclick="unlink()">탈퇴하기</button>
+      </li>
       {{/sessionUser}}
       <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
       <script type="text/javascript">
@@ -47,6 +54,38 @@
               console.log('로그인 실패');
               console.log(error);
             },
+          });
+        }
+
+        function unlink() {
+          console.log('회원 탈퇴');
+          Kakao.API.request({
+            url: '/v1/user/unlink',
+            success: function (response) {
+              alert('회원 탈퇴 성공');
+              axios.get('/users/unlink').then(response => {
+                location.reload();
+              });
+            },
+            fail: function (error) {
+              alert('회원 탈퇴 실패');
+              console.log(error);
+            },
+          });
+        }
+
+        function logout() {
+          console.log('로그아웃');
+          if (!Kakao.Auth.getAccessToken()) {
+            alert('로그인부터 하세요');
+            return;
+          }
+          Kakao.Auth.logout(function () {
+            console.log('로그아웃 성공');
+            axios.get('/users/logout').then(response => {
+              console.log('callback')
+              location.reload();
+            });
           });
         }
       </script>

@@ -71,4 +71,11 @@ public class UserController {
         session.invalidate();
         return "redirect:/";
     }
+
+    @GetMapping("/unlink")
+    public String unlink(HttpSession session) {
+        logger.info("[GET] /unlink 로그아웃");
+        session.invalidate();
+        return "redirect:/";
+    }
 }
