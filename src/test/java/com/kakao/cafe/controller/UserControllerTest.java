@@ -171,7 +171,7 @@ class UserControllerTest {
                 .andExpect(redirectedUrl("/users"));
 
         MockHttpSession session = new MockHttpSession();
-        SessionUser sessionUser = new SessionUser(firstId, userId, accessToken);
+        SessionUser sessionUser = new SessionUser(firstId, userId);
 
         mockMvc.perform(post("/users/login")
                         .session(session)
@@ -198,7 +198,7 @@ class UserControllerTest {
                 .andExpect(redirectedUrl("/users"));
 
         MockHttpSession session = new MockHttpSession();
-        SessionUser sessionUser = new SessionUser(firstId, userId, accessToken);
+        SessionUser sessionUser = new SessionUser(firstId, userId);
         session.setAttribute(SESSION, sessionUser);
 
         mockMvc.perform(get("/users/logout")

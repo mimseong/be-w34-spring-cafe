@@ -1,21 +1,26 @@
 package com.kakao.cafe.controller;
 
-import com.kakao.cafe.domain.SessionUser;
 import com.kakao.cafe.domain.User;
+import com.kakao.cafe.exceptions.InvalidLoginRequestException;
+import com.kakao.cafe.exceptions.InvalidUserRequestException;
+import com.kakao.cafe.request.LoginRequest;
 import com.kakao.cafe.request.UserSignupRequest;
 import com.kakao.cafe.response.ProfileResponse;
 import com.kakao.cafe.response.UserListResponse;
 import com.kakao.cafe.service.UserService;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -28,6 +33,22 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @PostMapping()
+    public String signUp(@Valid UserSignupRequest userDto, BindingResult errors) {
+        logger.info("[POST]  회원가입하기");
+        if (errors.hasErrors()) {
+            String errorMessage = errors.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.joining("\n"));
+            throw new InvalidUserRequestException(errorMessage);
+        }
+
+        User user = userDto.toEntity();
+        userService.register(user);
+
+        return "redirect:/users";
     }
 
     @GetMapping()
@@ -51,17 +72,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserSignupRequest userDto, HttpSession session) {
+    public String login(@Valid LoginRequest request, HttpSession session, BindingResult errors) {
         logger.info("[POST] /login 로그인");
-        logger.info("user DTO: " + userDto);
+        if (errors.hasErrors()) {
+            String errorMessage = errors.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.joining("\n"));
 
-        String accessToken = userDto.getAccessToken();
-        User user = userDto.toEntity();
-
-        if (userService.findByUserId(user.getUserId()) == null) {
-            userService.register(user);
+            throw new InvalidLoginRequestException(errorMessage);
         }
-        session.setAttribute(SESSION, SessionUser.from(user, accessToken));
+        session.setAttribute(SESSION, userService.login(request));
         return "redirect:/";
     }
 
@@ -69,19 +89,6 @@ public class UserController {
     public String logout(HttpSession session) {
         logger.info("[GET] /logout 로그아웃");
         session.invalidate();
-        return "redirect:/";
-    }
-
-    @GetMapping("/unlink")
-    public String unlink(HttpSession session) {
-        logger.info("[GET] /unlink 로그아웃");
-        session.invalidate();
-        return "redirect:/";
-    }
-
-    @GetMapping("/test")
-    public String test(HttpSession session) {
-        logger.info("[GET] /test 받았습니다");
         return "redirect:/";
     }
 }

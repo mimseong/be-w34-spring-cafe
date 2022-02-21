@@ -8,29 +8,36 @@
     </div>
     <ul class="nav navbar-nav navbar-right">
       <li class="active"><a href="/users">멤버 리스트</a></li>
+      {{^sessionUser}}
+      <li><a class="black-component" href="/user/login" role="button">로그인</a></li>
+      <li><a class="black-component" href="/user/signup" role="button">회원가입</a></li>
+      {{/sessionUser}}
+      {{#sessionUser}}
+      <li><a class="black-component" href="/users/logout" role="button">로그아웃</a></li>
+      {{/sessionUser}}
       <li id="menu"></li>
       <li id="menu2"></li>
       <script type="text/javascript">
         if (Kakao.Auth.getAccessToken()) {
-          console.log("로그인 상태");
+          console.log("kakao 로그인 상태");
           const btn = document.createElement("button");
           btn.className = 'black-component';
-          btn.innerHTML = "로그아웃";
+          btn.innerHTML = "kakao 로그아웃";
           btn.onclick = logout;
           const menu = document.querySelector('#menu');
           menu.appendChild(btn);
 
           const btn2 = document.createElement("button");
           btn2.className = 'black-component';
-          btn2.innerHTML = "탈퇴하기";
+          btn2.innerHTML = "kakao 탈퇴하기";
           btn2.onclick = unlink;
           const menu2 = document.querySelector('#menu2');
           menu2.appendChild(btn2);
         } else {
-          console.log("로그아웃 상태");
+          console.log("kakao 로그아웃 상태");
           const btn = document.createElement("button");
           btn.className = 'black-component';
-          btn.innerHTML = "로그인";
+          btn.innerHTML = "kakao 로그인";
           btn.onclick = login;
           const menu = document.querySelector('#menu');
           menu.appendChild(btn);
@@ -41,21 +48,12 @@
             success: function (response) {
               const accessToken = response.access_token;
               const scope = response.scope;
-              console.log('로그인 성공');
+              console.log('kakao 로그인 성공');
               Kakao.API.request({
                 url: '/v2/user/me',
                 success: function (response) {
                   console.log('사용자 정보 가져오기 성공');
-                  axios.post('/users/login', {
-                    userId: response.id,
-                    password: "password",
-                    name: response.properties.nickname,
-                    email: response.kakao_account.email,
-                    accessToken: accessToken,
-                    scope: scope
-                  }).then(response => {
-                    location.reload();
-                  });
+                  location.reload();
                 },
                 fail: function (error) {
                   console.log('사용자 정보 가져오기 실패');
@@ -77,9 +75,7 @@
             success: function (response) {
               alert('회원 탈퇴 성공');
               logout();
-              axios.get('/users/unlink').then(response => {
-                location.reload();
-              });
+              location.reload();
             },
             fail: function (error) {
               alert('회원 탈퇴 실패');

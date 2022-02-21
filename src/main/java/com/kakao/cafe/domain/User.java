@@ -6,16 +6,16 @@ public class User {
 
     private final int id;
     private final String userId;
+    private final String password;
     private final String name;
     private final String email;
-    private final String scope;
 
-    public User(int id, String userId, String name, String email, String scope) {
+    public User(int id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
+        this.password = password;
         this.name = name;
         this.email = email;
-        this.scope = scope;
     }
 
     public int getId() {
@@ -30,12 +30,12 @@ public class User {
         return name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getPassword() {
+        return password;
     }
 
-    public String getScope() {
-        return scope;
+    public String getEmail() {
+        return email;
     }
 
     @Override
@@ -59,6 +59,7 @@ public class User {
     public String toString() {
         return "User id: " + id +
                 ", userId: " + userId +
+                ", password: " + password +
                 ", name: " + name +
                 ", email: " + email;
     }
