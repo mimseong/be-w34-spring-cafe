@@ -112,6 +112,7 @@
         title: '친구 선택',
         maxPickableCount: 10,
         minPickableCount: 1,
+        showMyProfile: false,
         success: function (response) {
           console.log("친구 피커 성공");
           const sendUserUuidList = getSendUserUuidList(response);
@@ -126,6 +127,9 @@
 
     function sendMessage(sendUserUuidList) {
       Kakao.API.request({
+        url: '/v2/api/talk/memo/default/send'
+      });
+      Kakao.API.request({
         url: '/v1/api/talk/friends/message/scrap/send',
         data: {
           receiver_uuids: sendUserUuidList,
@@ -134,7 +138,6 @@
         },
         success: function (response) {
           console.log('메시지 api 보내기 성공')
-          console.log(response);
         },
         fail: function (error) {
           console.log('메시지 api 보내기 실패')
@@ -148,7 +151,6 @@
         url: '/v2/user/scopes',
         success: function (response) {
           console.log("scope 확인 성공");
-          console.log(response.scopes);
 
           const askScope = getAskScope(response)
           const askScopeString = askScope.join(",");
