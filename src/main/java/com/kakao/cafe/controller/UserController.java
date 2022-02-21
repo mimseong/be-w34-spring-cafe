@@ -78,4 +78,10 @@ public class UserController {
         session.invalidate();
         return "redirect:/";
     }
+
+    @GetMapping("/test")
+    public String test(HttpSession session) {
+        logger.info("[GET] /test 받았습니다");
+        return "redirect:/";
+    }
 }

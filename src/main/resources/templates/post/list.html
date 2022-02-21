@@ -52,82 +52,126 @@
   </div>
 
   <ul class="nav navbar-nav navbar-right">
-    <li>
-      <button id="kakao-link-btn">
-        <img
-            src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
-            alt="카카오링크 보내기 버튼"
-        />
-      </button>
-    </li>
-    <li>
-      <button id="test" onclick="friend()">
-        친구추가
-      </button>
-    </li>
+    <li id="message-api-send"></li>
+    <li id="link-api-send"></li>
   </ul>
   <script type="text/javascript">
-    Kakao.Link.createCustomButton({
-      container: '#kakao-link-btn',
-      templateId: 71134,
-      templateArgs: {
-        'title': '제목 영역입니다.',
-        'description': '설명 영역입니다.'
-      }
-    });
-  </script>
-  <script type="text/javascript">
-    function friend() {
-      console.log('친구추가');
-      console.log(Kakao.Auth.getAccessToken());
-      if (!Kakao.Auth.getAccessToken()) {
-        console.log('로그인 안 함')
-        alert('로그인부터 하세요');
-        return;
-      }
-      Kakao.API.request({
-        url: '/v1/api/talk/friends',
+    if (Kakao.Auth.getAccessToken()) {
+      const btn = document.createElement("button");
+      btn.className = 'black-component';
+      btn.innerHTML = "메시지api";
+      btn.onclick = messageApi;
+      const messageSendBtn = document.querySelector('#message-api-send');
+      messageSendBtn.appendChild(btn);
+
+      const btn2 = document.createElement("button");
+      btn2.id = "kakao-link-btn";
+      btn2.className = 'black-component';
+      btn2.innerHTML = "링크api";
+      const linkSendBtn = document.querySelector('#link-api-send');
+      linkSendBtn.appendChild(btn2);
+
+      Kakao.Link.createCustomButton({
+        container: '#kakao-link-btn',
+        templateId: 71134,
+        templateArgs: {
+          'title': '제목 영역입니다.',
+          'description': '설명 영역입니다.'
+        }
+      });
+    }
+
+    function getMyScope(response) {
+      const myScope = [];
+      response.scopes.forEach((scope) => {
+        if (scope.agreed) {
+          myScope.push(scope.id);
+        }
+      });
+      return myScope;
+    }
+
+    function getAskScope(response) {
+      const myScope = getMyScope(response);
+      const needScope = ['friends', 'profile_nickname', 'profile_image'];
+      return needScope.filter(x => !myScope.includes(x));
+    }
+
+    function getSendUserUuidList(response) {
+      const sendUserUuidList = [];
+      response.users.forEach(user => {
+        sendUserUuidList.push(user.uuid);
+      });
+      return sendUserUuidList;
+    }
+
+    function friendsPicker() {
+      Kakao.Picker.selectFriends({
+        friendFilter: 'registered',
+        serviceTypeFilter: 'talk',
+        title: '친구 선택',
+        maxPickableCount: 10,
+        minPickableCount: 1,
         success: function (response) {
-          console.log("친구 목록 불러오기 성공");
-
-          const friendUuidList = [];
-          response.elements.forEach((friend) => {
-            console.log(friend.uuid);
-            friendUuidList.push(friend.uuid);
-          });
-          console.log(friendUuidList);
-
-          Kakao.API.request({
-            url: '/v1/api/talk/friends/message/scrap/send',
-            data: {
-              receiver_uuids: friendUuidList,
-              request_url: 'http://localhost:8080/users/test',
-              template_id: 71227,
-            },
-            success: function(response) {
-              console.log('메시지 api 보내기 성공')
-              console.log(response);
-            },
-            fail: function(error) {
-              console.log('메시지 api 보내기 실패')
-              console.log(error);
-            },
-          });
+          console.log("친구 피커 성공");
+          const sendUserUuidList = getSendUserUuidList(response);
+          sendMessage(sendUserUuidList);
         },
         fail: function (error) {
-          console.log("친구 목록 불러오기 실패");
+          console.log("친구피커 실패")
           console.log(error);
-          Kakao.Auth.login({
-            scope: 'friends',
-            success: function (response) {
-              console.log("친구 목록 동의 성공");
-              console.log(response);
-            },
-            fail: function (error) {
-              console.log("친구 목록 동의 실패");
-              console.log(error);
-            }
-          });
+        }
+      });
+    }
+
+    function sendMessage(sendUserUuidList) {
+      Kakao.API.request({
+        url: '/v1/api/talk/friends/message/scrap/send',
+        data: {
+          receiver_uuids: sendUserUuidList,
+          request_url: 'http://localhost:8080/users/test',
+          template_id: 71227,
+        },
+        success: function (response) {
+          console.log('메시지 api 보내기 성공')
+          console.log(response);
+        },
+        fail: function (error) {
+          console.log('메시지 api 보내기 실패')
+          console.log(error);
+        },
+      });
+    }
+
+    function messageApi() {
+      Kakao.API.request({
+        url: '/v2/user/scopes',
+        success: function (response) {
+          console.log("scope 확인 성공");
+          console.log(response.scopes);
+
+          const askScope = getAskScope(response)
+          const askScopeString = askScope.join(",");
+
+          if (0 < askScope.length) {
+            Kakao.Auth.login({
+              scope: askScopeString,
+              success: function (response) {
+                console.log("추가 이용 동의 성공");
+                console.log(response);
+                friendsPicker();
+              },
+              fail: function (error) {
+                console.log("추가 이용 동의 실패");
+              }
+            });
+          } else {
+            friendsPicker();
+          }
+        },
+        fail: function (error) {
+          console.log("scope 확인 실패");
+          console.log(error);
         }
       });
     }
